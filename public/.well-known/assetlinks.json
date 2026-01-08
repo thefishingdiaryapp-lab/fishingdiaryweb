@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.fishingdiary.fishingdiaryapp", 
+      "sha256_cert_fingerprints": [
+        "43:C4:D5:F7:DC:86:7C:72:C7:D0:B2:D0:B9:2E:DA:6E:6F:BE:D1:D1:7B:E3:62:21:1F:22:DD:D0:9C:56:1D:12"
+      ]
+    }
+  }
+]
