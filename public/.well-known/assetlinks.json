@@ -3,9 +3,10 @@
     "relation": ["delegate_permission/common.handle_all_urls"],
     "target": {
       "namespace": "android_app",
-      "package_name": "com.fishingdiary.fishingdiaryapp", 
+      "package_name": "com.fishinitypro.fishingdiaryapp", 
       "sha256_cert_fingerprints": [
-        "43:C4:D5:F7:DC:86:7C:72:C7:D0:B2:D0:B9:2E:DA:6E:6F:BE:D1:D1:7B:E3:62:21:1F:22:DD:D0:9C:56:1D:12"
+        "43:C4:D5:F7:DC:86:7C:72:C7:D0:B2:D0:B9:2E:DA:6E:6F:BE:D1:D1:7B:E3:62:21:1F:22:DD:D0:9C:56:1D:12",
+        "33:31:D9:0B:42:8E:1C:7F:41:82:5B:C4:FA:A4:4D:C2:D4:5E:7E:35:C5:97:92:4D:07:92:3A:26:95:23:50:6E"
       ]
     }
   }
