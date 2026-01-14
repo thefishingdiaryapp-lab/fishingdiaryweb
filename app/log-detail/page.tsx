@@ -78,7 +78,7 @@ const AppRedirectContent = () => {
           />
         </div>
         
-        <h1 className="text-2xl font-extrabold text-gray-900 mb-2">Fishinity Pro</h1>
+        <h1 className="text-2xl font-extrabold text-gray-900 mb-2">Fishing Diaries</h1>
         <p className="text-gray-500 mb-8 leading-relaxed text-sm">{status}</p>
         
         <div className="space-y-4">
