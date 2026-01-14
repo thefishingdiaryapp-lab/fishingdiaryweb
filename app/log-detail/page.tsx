@@ -72,7 +72,7 @@ const AppRedirectContent = () => {
       <div className="bg-white p-8 rounded-3xl shadow-xl border border-gray-100 max-w-md w-full transition-all">
         <div className="mb-10 flex justify-center">
           <img 
-            src="logo.png" 
+            src="play_store_512.png" 
             alt="App Logo" 
             className="w-32 h-32 lg:w-48 lg:h-48 rounded-3xl shadow-2xl rotate-3"
           />
