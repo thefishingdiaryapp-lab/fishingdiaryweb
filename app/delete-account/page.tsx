@@ -102,7 +102,7 @@ const DeleteAccountPage = () => {
       <div className="max-w-2xl mx-auto">
         {/* Header Section */}
         <div className="text-center mb-10">
-          <img src="/logo.png" alt="Fishinity Pro" className="w-20 h-20 mx-auto mb-4 rounded-2xl shadow-md rotate-3" />
+          <img src="/play_store_512.png" alt="Fishinity Pro" className="w-20 h-20 mx-auto mb-4 rounded-2xl shadow-md rotate-3" />
           <h1 className="text-3xl font-extrabold text-gray-900">Account & Data Deletion</h1>
           <p className="text-gray-500 mt-2">Official request for Fishinity Pro (Fishing Diary) app users</p>
         </div>
