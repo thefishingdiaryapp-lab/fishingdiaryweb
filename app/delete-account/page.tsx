@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { initializeApp } from 'firebase/app';
+import { getApp, getApps, initializeApp } from 'firebase/app';
 import { getFirestore, collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { getAuth, signInAnonymously, onAuthStateChanged } from 'firebase/auth';
 
@@ -24,37 +24,47 @@ const DeleteAccountPage = () => {
   const [user, setUser] = useState<any>(null);
 
   // Initialize Firebase
-  useEffect(() => {
-    try {
-      const app = initializeApp(firebaseConfig);
-      const auth = getAuth(app);
+  // useEffect(() => {
+  //   try {
+  //     const app = initializeApp(firebaseConfig);
+  //     const auth = getAuth(app);
       
-      const initAuth = async () => {
-        // Following Rule 3: Auth before query
-        await signInAnonymously(auth);
-      };
+  //     const initAuth = async () => {
+  //       // Following Rule 3: Auth before query
+  //       await signInAnonymously(auth);
+  //     };
       
-      initAuth();
-      const unsubscribe = onAuthStateChanged(auth, setUser);
-      return () => unsubscribe();
-    } catch (err) {
-      console.error("Firebase init error:", err);
-    }
-  }, []);
+  //     initAuth();
+  //     const unsubscribe = onAuthStateChanged(auth, setUser);
+  //     return () => unsubscribe();
+  //   } catch (err) {
+  //     console.error("Firebase init error:", err);
+  //   }
+  // }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email) return;
-    if (!user) {
-      setError("Failed to process request. Please refresh the page.");
-      return;
-    }
 
     setIsSubmitting(true);
     setError('');
 
     try {
-      const db = getFirestore();
+      // 1. Inisialisasi Firebase (Gunakan singleton pattern)
+      const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
+      const auth = getAuth(app);
+      const db = getFirestore(app);
+
+      // 2. Login Anonim HANYA saat tombol ditekan (Mencegah spam user anonim)
+      // Sesuai RULE 3: Auth dilakukan sebelum operasi Firestore
+      const userCredential = await signInAnonymously(auth);
+      const user = userCredential.user;
+
+      if (!user) {
+        setError("Failed to process request. Please refresh the page.");
+        return;
+      }
+
       // Following Rule 1: Allowed Path
       const collectionPath = collection(db, 'artifacts', appId, 'public', 'data', 'deletion_requests');
       
@@ -63,7 +73,8 @@ const DeleteAccountPage = () => {
         reason: reason,
         requestedAt: serverTimestamp(),
         status: 'pending',
-        uid: user.uid
+        uid: user.uid,
+        platform: 'web_request'
       });
 
       setIsSuccess(true);
