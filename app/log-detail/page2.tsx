@@ -3,50 +3,40 @@
 import React, { useEffect, useState } from 'react';
 
 /**
- * PANDUAN KONFIGURASI:
- * 1. Android: Pastikan assetlinks.json ada di public/.well-known/
- * 2. iOS: Pastikan apple-app-site-association ada di public/.well-known/
+ * PANDUAN PENEMPATAN DI NEXT.JS 14+ (App Router):
+ * * 1. Struktur Folder: app/log-detail/page.tsx
+ * 2. File Konfigurasi (Wajib): public/.well-known/assetlinks.json
+ * 3. URL yang akan ditangani: https://fishingdiaries.com/log-detail?id=xxx
  */
 
 const AppRedirectContent = () => {
-  const [status, setStatus] = useState<string>("Detecting device...");
+  const [status, setStatus] = useState<string>("Checking the application...");
   const [logId, setLogId] = useState<string | null>(null);
-  const [os, setOs] = useState<'android' | 'ios' | 'other'>('other');
   
+  // Konfigurasi Aplikasi Anda (Sesuaikan dengan AndroidManifest)
   const APP_CONFIG = {
     domain: "fishingdiaries.com", 
-    packageName: "com.fishinitypro.fishingdiaryapp", // Android
-    appleAppId: "6757974299", // GANTI dengan App Store ID Anda (numeric)
+    packageName: "com.fishinitypro.fishingdiaryapp",
     scheme: "https"
   };
 
-  const storeLinks = {
-    android: `https://play.google.com/store/apps/details?id=${APP_CONFIG.packageName}`,
-    ios: `https://apps.apple.com/app/id${APP_CONFIG.appleAppId}`,
-  };
+  const playStoreUrl = `https://play.google.com/store/apps/details?id=${APP_CONFIG.packageName}`;
 
   useEffect(() => {
+    // Menggunakan window.location.search untuk mengambil parameter 'id'
+    // Ini menghindari dependensi pada 'next/navigation' yang bermasalah di lingkungan ini
     const params = new URLSearchParams(window.location.search);
     const id = params.get('id');
     setLogId(id);
 
-    const ua = navigator.userAgent;
-    const isAndroid = /Android/i.test(ua);
-    const isIOS = /iPhone|iPad|iPod/i.test(ua);
-
-    const currentOs = isAndroid ? 'android' : isIOS ? 'ios' : 'other';
-    setOs(currentOs);
-
-    if (currentOs === 'other') {
-      setStatus("Please open this link on an Android or iOS device.");
+    // Deteksi apakah pengguna menggunakan Android
+    const isAndroid = /Android/i.test(navigator.userAgent);
+    
+    if (!isAndroid) {
+      setStatus("Please open this link on your Android device to see details in the app.");
       return;
     }
-
-    setStatus(currentOs === 'android' 
-      ? "Opening in Fishing Diaries App..." 
-      : "Opening in Fishing Diaries App (iOS)..."
-    );
-
+    
     const appLink = id 
       ? `${APP_CONFIG.scheme}://${APP_CONFIG.domain}/log-detail?id=${id}`
       : `${APP_CONFIG.scheme}://${APP_CONFIG.domain}/log-detail`;
@@ -56,21 +46,17 @@ const AppRedirectContent = () => {
     // 1. Coba buka aplikasi secara otomatis
     window.location.href = appLink;
 
-    // 2. Fallback Race Logic
+    // 2. Deteksi kegagalan (Fallback ke Play Store)
     const timer = setTimeout(() => {
       const end = Date.now();
-      // Jika dalam 2.5 detik browser tidak pindah fokus, asumsikan gagal/tidak terinstall
       if (end - start < 2500) {
-        setStatus(currentOs === 'android' 
-          ? "App not detected. Redirecting to Play Store..." 
-          : "App not detected. Redirecting to App Store..."
-        );
-        window.location.href = currentOs === 'android' ? storeLinks.android : storeLinks.ios;
+        setStatus("App not detected. Redirecting to Play Store...");
+        window.location.href = playStoreUrl;
       }
     }, 2000);
 
     return () => clearTimeout(timer);
-  }, []);
+  }, [playStoreUrl, APP_CONFIG.domain, APP_CONFIG.scheme]);
 
   const handleManualOpen = () => {
     const params = new URLSearchParams(window.location.search);
@@ -86,9 +72,9 @@ const AppRedirectContent = () => {
       <div className="bg-white p-8 rounded-3xl shadow-xl border border-gray-100 max-w-md w-full transition-all">
         <div className="mb-10 flex justify-center">
           <img 
-            src="/play_store_512.png" 
+            src="play_store_512.png" 
             alt="App Logo" 
-            className="w-32 h-32 lg:w-48 lg:h-48 rounded-3xl shadow-2xl rotate-3 object-cover"
+            className="w-32 h-32 lg:w-48 lg:h-48 rounded-3xl shadow-2xl rotate-3"
           />
         </div>
         
@@ -100,22 +86,20 @@ const AppRedirectContent = () => {
             onClick={handleManualOpen}
             className="block w-full py-4 px-6 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl transition shadow-md active:scale-95 outline-none"
           >
-            {os === 'ios' ? 'Open in App Store' : 'Open in App'}
+            Open in Applications
           </button>
           
           <a 
-            href={os === 'ios' ? storeLinks.ios : storeLinks.android}
+            href={playStoreUrl}
             className="block w-full py-4 px-6 bg-gray-100 border border-transparent text-gray-700 font-semibold rounded-xl hover:bg-gray-200 transition active:scale-95"
           >
-            {os === 'ios' ? 'Get it on App Store' : 'Get it on Play Store'}
+            Instal from Play Store
           </a>
         </div>
 
         <div className="mt-8 pt-6 border-t border-gray-100 text-xs text-gray-400">
-          <p>Note ID: {logId || 'Not found'}</p>
-          <p className="mt-1 font-medium italic">
-            {os === 'android' ? 'Android 6.0+' : os === 'ios' ? 'iOS 12.0+' : 'Mobile Devices Only'}
-          </p>
+          <p>Note ID: {logId || 'Tidak ditemukan'}</p>
+          <p className="mt-1 font-medium">Android version 6.0+</p>
         </div>
       </div>
     </div>
